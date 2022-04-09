@@ -17,7 +17,7 @@ TagManager:
   - Shots
   - Invisible Collider
   - Enemy
-  - 
+  - Destructible
   - 
   - 
   - 
@@ -56,4 +56,7 @@ TagManager:
     locked: 0
   - name: Player
     uniqueID: 3468839967
+    locked: 0
+  - name: Before Player
+    uniqueID: 2372739547
     locked: 0

@@ -31,6 +31,7 @@ public class GameManager : MonoBehaviour
     public void Respawn()
     {
         PlayerController.instance.transform.position = respawnPoint;
+        CameraController.instance.stopFollow = false;
         Debug.Log("Respawn Player");
     }
 
@@ -48,5 +49,15 @@ public class GameManager : MonoBehaviour
 
         SceneManager.LoadScene(winMenuLevel);
 
+    }
+
+    public void GameOver()
+    {
+        StartCoroutine(GameOverCo());
+    }
+
+    public IEnumerator GameOverCo()
+    {
+        yield return null;
     }
 }

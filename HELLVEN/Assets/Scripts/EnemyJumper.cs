@@ -19,12 +19,12 @@ public class EnemyJumper : MonoBehaviour
         //Get Component
         theRB = GetComponent<Rigidbody2D>();
 
+        //Make the enemy wait before moving
         waitCounter = waitAtPoint;
 
+        //For each loop to make each point have no parent
         foreach (Transform pPoint in patrolPoints)
-        {
             pPoint.SetParent(null);
-        }
     }
 
     void Update()

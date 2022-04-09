@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Object Variables")]
     public Rigidbody2D theRB;
+    public Animator anim;
 
     [Header("Movement Variables")]
     public float moveSpeed;
@@ -16,17 +17,31 @@ public class PlayerController : MonoBehaviour
     public bool canDoubleJump;
     public float dashTime, dashSpeed, timeBetweenDashes;
     private float dashCounter, dashWaitCounter;
+    [HideInInspector] public bool canMove;
 
     [Header("GroundCheck Variables")]
-    public Transform groundCheckPoint;
     public LayerMask whatIsGround;
-    public bool isGrounded;
+    public bool isGrounded, isBelowGround;
+    public Transform groundCheckPoint, belowGroundPoint;
+
+    [Header("Ball Mode Variables")]
+    public float waitToSwitch;
+    private float switchCounter;
+    public GameObject standingObject, ballObject;
+    public Animator ballAnim;
+
+    [Header("Ball Mode Variables")]
+    public GameObject theBomb;
+    public Transform bombPoint;
+    public float timeBetweenBombs;
+    private float bombCounter;
 
     [Header("Shooting Variables")]
     public BulletController theBullet;
     public Transform shotPoint;
     public float timeBetweenShots;
     private float shotCounter;
+    public int currentAmmo = 15, currentBombAmmo = 10;
 
     [Header("After Image Effect Variables")]
     public Color afterImageColor;
@@ -36,6 +51,7 @@ public class PlayerController : MonoBehaviour
 
     void Awake()
     {
+        //Set the instance equal to this gameobject
         if (instance == null)
         {
             instance = this;
@@ -46,11 +62,14 @@ public class PlayerController : MonoBehaviour
     {
         //Get Components
         theRB = GetComponent<Rigidbody2D>();
+
+        //Make the Player Able to Move at Start
+        canMove = true;
     }
 
     void Update()
     {
-        if (!PauseMenu.instance.isPaused && !UIController.instance.isDead && !GameManager.instance.isExiting)
+        if (canMove)
         {
             WorldChecks();
 
@@ -58,11 +77,13 @@ public class PlayerController : MonoBehaviour
 
             Countdowns();
         }
+
+        Animations();
     }
 
     void FixedUpdate()
     {
-        if (!PauseMenu.instance.isPaused && !UIController.instance.isDead && !GameManager.instance.isExiting)
+        if (canMove)
         {
             if (dashCounter <= 0)
             {
@@ -77,7 +98,10 @@ public class PlayerController : MonoBehaviour
                 //Move the rigidbody on the x-axis depending on the dashSpeed * the local scale of the player on the x-axis
                 theRB.velocity = new Vector2(dashSpeed * transform.localScale.x, 0f);
             }
-
+        }
+        else
+        {
+            theRB.velocity = Vector2.zero;
         }
     }
 
@@ -85,6 +109,7 @@ public class PlayerController : MonoBehaviour
     {
         //Detecting if the player is grounded using Unity's built in physics and layer masks
         isGrounded = Physics2D.OverlapCircle(groundCheckPoint.position, .2f, whatIsGround);
+        isBelowGround = Physics2D.OverlapCircle(belowGroundPoint.position, .2f, whatIsGround);
     }
 
     void Inputs()
@@ -106,7 +131,7 @@ public class PlayerController : MonoBehaviour
         }
 
         //Get inputs for dashing and perform it
-        if (Input.GetButtonDown("Dash") && dashWaitCounter <= 0)
+        if (Input.GetButtonDown("Dash") && dashWaitCounter <= 0 && standingObject.activeSelf)
         {
             dashCounter = dashTime;
             AudioManager.instance.PlaySFXAdjusted(0);
@@ -115,11 +140,57 @@ public class PlayerController : MonoBehaviour
         }
 
         //Get inputs for shooting and perform it
-        if ((Input.GetButtonDown("Shoot") || Input.GetAxis("ShootingTrigger") > 0.5f) && shotCounter <= 0)
+        if ((Input.GetButtonDown("Shoot") || Input.GetAxis("ShootingTrigger") > 0.5f))
         {
-            //Create a bullet and base its move direction of the players local scale
-            Instantiate(theBullet, shotPoint.position, shotPoint.rotation).moveDir = new Vector2(transform.localScale.x, 0f);
-            shotCounter = timeBetweenShots;
+            if (standingObject.activeSelf && shotCounter <= 0 && currentAmmo > 0)
+            {
+                //Create a bullet and base its move direction of the players local scale
+                Instantiate(theBullet, shotPoint.position, shotPoint.rotation).moveDir = new Vector2(transform.localScale.x, 0f);
+                anim.SetTrigger("shotFired");
+                shotCounter = timeBetweenShots;
+
+                currentAmmo--;
+                UIController.instance.UpdateAmmoUI();
+            }
+            else if (ballObject.activeSelf && bombCounter <= 0 && currentBombAmmo > 0)
+            {
+                Instantiate(theBomb, bombPoint.position, bombPoint.rotation);
+                bombCounter = timeBetweenBombs;
+
+                currentBombAmmo--;
+                UIController.instance.UpdateBombUI();
+            }
+        }
+
+        if (!ballObject.activeSelf)
+        {
+            if (Input.GetAxisRaw("Vertical") < -.9f)
+            {
+                switchCounter -= Time.deltaTime;
+
+                if (switchCounter <= 0)
+                {
+                    ballObject.SetActive(true);
+                    standingObject.SetActive(false);
+                }
+            }
+            else
+                switchCounter = waitToSwitch;
+        }
+        else if (!standingObject.activeSelf)
+        {
+            if (Input.GetAxisRaw("Vertical") > .9f && !isBelowGround)
+            {
+                switchCounter -= Time.deltaTime;
+
+                if (switchCounter <= 0)
+                {
+                    ballObject.SetActive(false);
+                    standingObject.SetActive(true);
+                }
+            }
+            else
+                switchCounter = waitToSwitch;
         }
     }
 
@@ -142,6 +213,9 @@ public class PlayerController : MonoBehaviour
         //Make the shot counter decrement
         if (shotCounter > 0)
             shotCounter -= Time.deltaTime;
+
+        if (bombCounter > 0)
+            bombCounter -= Time.deltaTime;
 
         if (dashCounter > 0)
         {
@@ -176,6 +250,20 @@ public class PlayerController : MonoBehaviour
 
         //Set the after image counter to time between images to create multiple images
         afterImageCounter = timeBetweenImages;
+    }
+
+    void Animations()
+    {
+        //Use parameters to set up animations for the player depending on mode (standing or ball)
+        if (standingObject.activeSelf)
+        {
+            anim.SetFloat("moveSpeed", Mathf.Abs(theRB.velocity.x));
+            anim.SetBool("isGrounded", isGrounded);
+        }
+        else if (ballObject.activeSelf)
+        {
+            ballAnim.SetFloat("moveSpeed", Mathf.Abs(theRB.velocity.x));
+        }
     }
 
     void OnDrawGizmosSelected()

@@ -1,16 +1,43 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+using UnityEngine.SceneManagement;
 
 public class LoadingScreen : MonoBehaviour
 {
-    void Start()
+    [Header("Loading Screen Variables")]
+    public Slider loadingBar;
+    public GameObject loadingScreen;
+    public TMP_Text loadingText;
+
+    public void LoadScene(string levelToLoad)
     {
-        
+        loadingScreen.SetActive(true);
+        StartCoroutine(LoadLevelCo(levelToLoad));
     }
 
-    void Update()
+    public IEnumerator LoadLevelCo(string levelToLoad)
     {
-        
+        AsyncOperation operation = SceneManager.LoadSceneAsync(levelToLoad);
+        operation.allowSceneActivation = false;
+
+        while (!operation.isDone)
+        {
+            loadingBar.value = operation.progress;
+
+            if (operation.progress >= .9f)
+            {
+                loadingText.text = "Press Any Key To Continue";
+
+                if (Input.anyKeyDown && !operation.allowSceneActivation)
+                {
+                    operation.allowSceneActivation = true;
+                }
+            }
+
+            yield return null;
+        }
     }
 }

@@ -19,9 +19,13 @@ public class UIController : MonoBehaviour
     public bool isDead;
     public GameObject restartButton;
 
-    [Header("Health Variables")]
-    public Slider healthSlider;
-    public TMP_Text healthText;
+    [Header("Energy Variables")]
+    public Slider energySlider;
+    public TMP_Text energyText;
+
+    [Header("Shooting Variables")]
+    public TMP_Text ammoText;
+    public TMP_Text bombText;
 
     void Awake()
     {
@@ -35,41 +39,32 @@ public class UIController : MonoBehaviour
     {
         FadeFromBlack();
         UpdateHealthUI();
+        UpdateAmmoUI();
+        UpdateBombUI();
     }
 
     void Update()
     {
-        //Fading the fade screen to black
-        if (fadeToBlack)
-        {
-            fadeScreen.color = new Color(fadeScreen.color.r, fadeScreen.color.g, fadeScreen.color.b,
-            Mathf.MoveTowards(fadeScreen.color.a, 1f, fadeSpeed * Time.deltaTime));
-
-            if (fadeScreen.color.a == 1f)
-            {
-                fadeToBlack = false;
-            }
-        }
-
-        if (fadeFromBlack)
-        {
-            fadeScreen.color = new Color(fadeScreen.color.r, fadeScreen.color.g, fadeScreen.color.b,
-            Mathf.MoveTowards(fadeScreen.color.a, 0f, fadeSpeed * Time.deltaTime));
-
-            if (fadeScreen.color.a == 0f)
-            {
-                fadeFromBlack = false;
-            }
-        }
+        FadingScreen();
     }
 
     public void UpdateHealthUI()
     {
-        healthSlider.maxValue = PlayerHealthController.instance.maxHealth;
-        healthSlider.value = PlayerHealthController.instance.currentHealth;
+        energySlider.maxValue = PlayerHealthController.instance.maxHealth;
+        energySlider.value = PlayerHealthController.instance.currentHealth;
 
-        healthText.text = "Health: " + PlayerHealthController.instance.currentHealth.ToString() +
+        energyText.text = "Energy:" + PlayerHealthController.instance.currentHealth.ToString() +
         "/" + PlayerHealthController.instance.maxHealth.ToString();
+    }
+
+    public void UpdateAmmoUI()
+    {
+        ammoText.text = PlayerController.instance.currentAmmo.ToString("F0");
+    }
+
+    public void UpdateBombUI()
+    {
+        bombText.text = PlayerController.instance.currentBombAmmo.ToString("F0");
     }
 
     public void ShowGameOver()
@@ -81,6 +76,27 @@ public class UIController : MonoBehaviour
         PlayerController.instance.theRB.velocity = Vector3.zero;
         EventSystem.current.SetSelectedGameObject(null);
         EventSystem.current.SetSelectedGameObject(restartButton);
+    }
+
+    void FadingScreen()
+    {
+        if (fadeToBlack)
+        {
+            fadeScreen.color = new Color(fadeScreen.color.r, fadeScreen.color.g, fadeScreen.color.b,
+            Mathf.MoveTowards(fadeScreen.color.a, 1f, fadeSpeed * Time.deltaTime));
+
+            if (fadeScreen.color.a == 1f)
+                fadeToBlack = false;
+        }
+
+        if (fadeFromBlack)
+        {
+            fadeScreen.color = new Color(fadeScreen.color.r, fadeScreen.color.g, fadeScreen.color.b,
+            Mathf.MoveTowards(fadeScreen.color.a, 0f, fadeSpeed * Time.deltaTime));
+
+            if (fadeScreen.color.a == 0f)
+                fadeFromBlack = false;
+        }
     }
 
     //Function to fade the fade screen from being black
