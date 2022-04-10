@@ -252,7 +252,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -45, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &2472593775277943658
@@ -706,7 +706,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 530.8195, y: 544.5878}
+  m_SizeDelta: {x: 584.4205, y: 544.5878}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &2472593775767475041
 CanvasRenderer:
@@ -736,7 +736,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'left-stick
+  m_text: 'LEFT STICK (SIDEWAYS)
 
 
     RT TRIGGER
@@ -748,11 +748,11 @@ MonoBehaviour:
     A BUTTON
 
 
-    TBD
+    left
+    stick (up/down)
 
 
-    HOME
-    BUTTON
+    HOME BUTTON
 
 
 '
@@ -889,7 +889,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'WASD
+  m_text: 'A & D
 
 
     LEFT CLICK
@@ -901,7 +901,7 @@ MonoBehaviour:
     SPACE
 
 
-    TBD
+    W & S
 
 
     ESCAPE

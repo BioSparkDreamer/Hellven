@@ -126,7 +126,7 @@ public class PlayerController : MonoBehaviour
                 canDoubleJump = false;
 
             theRB.velocity = new Vector2(theRB.velocity.x, jumpForce);
-            AudioManager.instance.PlaySFXAdjusted(1);
+            AudioManager.instance.PlaySFXAdjusted(12);
 
         }
 
@@ -134,7 +134,7 @@ public class PlayerController : MonoBehaviour
         if (Input.GetButtonDown("Dash") && dashWaitCounter <= 0 && standingObject.activeSelf)
         {
             dashCounter = dashTime;
-            AudioManager.instance.PlaySFXAdjusted(0);
+            AudioManager.instance.PlaySFXAdjusted(8);
             ShowAfterImage();
             dashWaitCounter = timeBetweenDashes;
         }
@@ -148,7 +148,7 @@ public class PlayerController : MonoBehaviour
                 Instantiate(theBullet, shotPoint.position, shotPoint.rotation).moveDir = new Vector2(transform.localScale.x, 0f);
                 anim.SetTrigger("shotFired");
                 shotCounter = timeBetweenShots;
-
+                AudioManager.instance.PlaySFXAdjusted(0);
                 currentAmmo--;
                 UIController.instance.UpdateAmmoUI();
             }
@@ -156,7 +156,6 @@ public class PlayerController : MonoBehaviour
             {
                 Instantiate(theBomb, bombPoint.position, bombPoint.rotation);
                 bombCounter = timeBetweenBombs;
-
                 currentBombAmmo--;
                 UIController.instance.UpdateBombUI();
             }
@@ -172,6 +171,7 @@ public class PlayerController : MonoBehaviour
                 {
                     ballObject.SetActive(true);
                     standingObject.SetActive(false);
+                    AudioManager.instance.PlaySFXAdjusted(7);
                 }
             }
             else
@@ -187,6 +187,7 @@ public class PlayerController : MonoBehaviour
                 {
                     ballObject.SetActive(false);
                     standingObject.SetActive(true);
+                    AudioManager.instance.PlaySFXAdjusted(10);
                 }
             }
             else

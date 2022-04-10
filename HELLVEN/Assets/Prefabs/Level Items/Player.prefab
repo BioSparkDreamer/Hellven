@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3104752439562856277}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.5, z: 0}
+  m_LocalPosition: {x: -0.03, y: -0.803, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8330984749233103688}
@@ -54,7 +54,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4399432899559660663}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.022, y: -1.709, z: 0}
+  m_LocalPosition: {x: -0.022, y: -1.459, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8330984749233103688}
@@ -131,7 +131,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -826127329
-  m_SortingLayer: 5
+  m_SortingLayer: 6
   m_SortingOrder: 1
   m_Sprite: {fileID: 807331871394018222, guid: 86bc043603ceda540aca6f39ecae4793, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -233,7 +233,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8330984748945964196}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.203, y: 0.377, z: 0}
+  m_LocalPosition: {x: 1.234, y: 0.27, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8330984749233103688}
@@ -292,27 +292,32 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   theRB: {fileID: 8330984749233103691}
   anim: {fileID: 8330984747612419642}
-  moveSpeed: 6
+  moveSpeed: 8
   jumpForce: 20
   canDoubleJump: 0
   dashTime: 0.2
   dashSpeed: 25
   timeBetweenDashes: 0.8
-  groundCheckPoint: {fileID: 8330984747840933973}
+  canMove: 0
   whatIsGround:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 2112
   isGrounded: 0
+  isBelowGround: 0
+  groundCheckPoint: {fileID: 8330984747840933973}
+  belowGroundPoint: {fileID: 737361550401031863}
   waitToSwitch: 0.5
   standingObject: {fileID: 8330984747612419622}
   ballObject: {fileID: 8330984749350451965}
   ballAnim: {fileID: 8330984749350451955}
-  theBomb: {fileID: 0}
+  theBomb: {fileID: 90755143397055444, guid: 79fb3285bc7a61a41b48ca4b7b7b360d, type: 3}
   bombPoint: {fileID: 6654122652601895622}
   timeBetweenBombs: 1
   theBullet: {fileID: 5566873761345559360, guid: eb4b64e0f9250664aa2cf12860f64abc, type: 3}
   shotPoint: {fileID: 8330984748945964197}
   timeBetweenShots: 0.5
+  currentAmmo: 15
+  currentBombAmmo: 10
   afterImageColor: {r: 0.039622605, g: 0.36098424, b: 0.5, a: 0.78431374}
   afterImageLifeTime: 0.5
   timeBetweenImages: 0.033333335
@@ -332,6 +337,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   currentHealth: 0
+  deathEffect: {fileID: 5529417578979523298, guid: 741a9b6f422a2b647ba1b2937e0f16bd, type: 3}
+  ballDeathEffect: {fileID: 5008965483769142379, guid: 2bb6961591a27a847a5eef56a890dd89, type: 3}
+  invincibleLength: 1.5
+  flashLength: 0.1
+  playerSprites:
+  - {fileID: 8330984747612419623}
+  - {fileID: 8330984749350451953}
+  hurtColor: {r: 1, g: 0.45490196, b: 0.45490196, a: 1}
+  defaultColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!50 &8330984749233103691
 Rigidbody2D:
   serializedVersion: 4
@@ -367,11 +381,11 @@ GameObject:
   - component: {fileID: 8330984749350451955}
   m_Layer: 0
   m_Name: Ball Sprite
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8330984749350451954
 Transform:
   m_ObjectHideFlags: 0
@@ -424,7 +438,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -826127329
-  m_SortingLayer: 5
+  m_SortingLayer: 6
   m_SortingOrder: 0
   m_Sprite: {fileID: 133753743751427516, guid: 643dd3659c91b2147bef0338af9f86f3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -450,9 +464,9 @@ CircleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.019358695, y: -0.08978334}
+  m_Offset: {x: -0.019358695, y: -0.12635401}
   serializedVersion: 2
-  m_Radius: 0.44296303
+  m_Radius: 0.40639237
 --- !u!95 &8330984749350451955
 Animator:
   serializedVersion: 3

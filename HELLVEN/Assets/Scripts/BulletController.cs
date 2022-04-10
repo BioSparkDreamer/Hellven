@@ -13,17 +13,17 @@ public class BulletController : MonoBehaviour
 
     [Header("Extra Variables")]
     public int damageToDeal;
+    public GameObject impactEffect;
 
     void Start()
     {
         //Get Components
         theRB = GetComponent<Rigidbody2D>();
-        AudioManager.instance.PlaySFXAdjusted(4);
     }
 
     void FixedUpdate()
     {
-        //Move the velocity of the bullet
+        //Move the velocity of the bullet depending on the move direction & move speed
         theRB.velocity = (moveDir * moveSpeed);
     }
 
@@ -34,6 +34,11 @@ public class BulletController : MonoBehaviour
             other.GetComponent<EnemyHealthController>().TakeDamage(damageToDeal);
         }
 
+        //Instantiate the Impact Effect
+        if (impactEffect != null)
+            Instantiate(impactEffect, transform.position, transform.rotation);
+
+        //Destroy the bullet
         Destroy(gameObject);
     }
 

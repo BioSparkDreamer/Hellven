@@ -9,6 +9,7 @@ public class PlayerHealthController : MonoBehaviour
     [Header("Player Health Variables")]
     public int maxHealth;
     [HideInInspector] public int currentHealth;
+    public GameObject deathEffect, ballDeathEffect;
 
     [Header("Invincibility Variables")]
     public float invincibleLength;
@@ -76,20 +77,50 @@ public class PlayerHealthController : MonoBehaviour
         if (invincibleCounter <= 0)
         {
             currentHealth -= damageToTake;
+            GameManager.instance.healthLost += damageToTake;
 
             if (currentHealth <= 0)
             {
                 currentHealth = 0;
+                ShowDeathEffect();
                 GameManager.instance.GameOver();
-                AudioManager.instance.PlaySFXAdjusted(2);
+                AudioManager.instance.PlaySFXAdjusted(9);
             }
             else
             {
                 invincibleCounter = invincibleLength;
-                AudioManager.instance.PlaySFXAdjusted(3);
+                AudioManager.instance.PlaySFXAdjusted(11);
             }
 
             UIController.instance.UpdateHealthUI();
+        }
+    }
+
+    public void AddHealth(int healthToAdd)
+    {
+        currentHealth += healthToAdd;
+
+        if (currentHealth > maxHealth)
+        {
+            currentHealth = maxHealth;
+        }
+
+        UIController.instance.UpdateHealthUI();
+    }
+
+    public void ShowDeathEffect()
+    {
+        //Show Death Effect Depending on what mode the player is currently in
+        if (PlayerController.instance.standingObject.activeSelf)
+        {
+            if (deathEffect != null)
+                Instantiate(deathEffect, transform.position, transform.rotation);
+        }
+        else if (PlayerController.instance.ballObject.activeSelf)
+        {
+            //Instantiate the Death Effect at the Bomb Point position to match the height of the sprite
+            if (ballDeathEffect != null)
+                Instantiate(ballDeathEffect, PlayerController.instance.bombPoint.position, transform.rotation);
         }
     }
 }
